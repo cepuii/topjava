@@ -36,7 +36,7 @@ public class MealsRepositoryImpl implements MealsRepository{
     public Map<Integer, Meal> getAll() {
         return this.meals;
     }
-    public Meal getMealById(int mealId) {
+    public Meal getById(int mealId) {
         return meals.get(mealId);
     }
 

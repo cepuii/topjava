@@ -7,7 +7,7 @@
     <title>Add new user</title>
 </head>
 <body>
-<form method="POST" action='meals'>
+<form method="POST" action='meals.jsp'>
     <label> Date : <input
             type="datetime-local" name="date"
             value="${meal.dateTime}"/> <br/>

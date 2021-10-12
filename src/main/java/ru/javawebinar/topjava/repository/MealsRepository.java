@@ -11,5 +11,5 @@ public interface MealsRepository {
     public void delete(int mealId);
     public void update(int id, Meal meal);
     public Map<Integer, Meal> getAll();
-    public Meal getMealById(int mealId);
+    public Meal getById(int mealId);
 }
