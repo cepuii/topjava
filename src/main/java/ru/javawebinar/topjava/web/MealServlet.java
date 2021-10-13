@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.web;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.Repository;
 import ru.javawebinar.topjava.repository.RepositoryMeals;
+import ru.javawebinar.topjava.repository.RepositoryMealsInMemory;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletException;
@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 
 public class MealServlet extends HttpServlet {
     private static final int CALORIES_PER_DAY = 2000;
-    private Repository mealsRepository;
+    private RepositoryMeals mealsRepository;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        mealsRepository = new RepositoryMeals();
+        mealsRepository = new RepositoryMealsInMemory();
     }
 
     @Override
