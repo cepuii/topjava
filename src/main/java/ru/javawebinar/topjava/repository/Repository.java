@@ -4,7 +4,7 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.util.List;
 
-public interface MealsRepository {
+public interface Repository {
 
     Meal add(Meal meal);
 

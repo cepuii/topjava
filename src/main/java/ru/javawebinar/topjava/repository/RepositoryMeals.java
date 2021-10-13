@@ -4,18 +4,18 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MealsRepositoryImpl implements MealsRepository {
+public class RepositoryMeals implements Repository {
     private final AtomicInteger id;
     private final List<Meal> meals;
 
-    public MealsRepositoryImpl() {
-        this.id = new AtomicInteger(1);
+    public RepositoryMeals() {
+        this.id = new AtomicInteger(0);
         this.meals = new CopyOnWriteArrayList<>();
-
         this.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
         this.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
         this.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
@@ -31,28 +31,15 @@ public class MealsRepositoryImpl implements MealsRepository {
     }
 
     public void delete(int id) {
-
         meals.remove(getById(id));
     }
 
     public Meal update(Meal meal) {
-        Meal mealToUpdate = getById(meal.getId());
-        if (meal.getDateTime() != null) {
-            mealToUpdate.setDateTime(meal.getDateTime());
-        }
-        if (meal.getDescription() != null && !meal.getDescription().isEmpty()) {
-            mealToUpdate.setDescription(meal.getDescription());
-        }
-        if (meal.getCalories() != 0) {
-            mealToUpdate.setCalories(meal.getCalories());
-        }
-        int indexOfMeal = meals.indexOf(mealToUpdate);
-        meals.set(indexOfMeal, mealToUpdate);
-        return mealToUpdate;
+        return meals.set(meals.indexOf(meal), meal);
     }
 
     public List<Meal> getAll() {
-        return this.meals;
+        return new ArrayList<>(meals);
     }
 
     public Meal getById(int id) {
