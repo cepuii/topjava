@@ -6,7 +6,6 @@
 <html>
 <head>
     <title>Meals</title>
-
 </head>
 <body>
 <table>

@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class MealTo {
     private final int id;
@@ -49,5 +50,9 @@ public class MealTo {
                 ", calories=" + calories +
                 ", excess=" + excess +
                 '}';
+    }
+
+    public LocalTime getTime() {
+        return dateTime.toLocalTime();
     }
 }

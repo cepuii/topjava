@@ -5,15 +5,15 @@ import ru.javawebinar.topjava.repository.MealsRepository;
 import ru.javawebinar.topjava.repository.MealsRepositoryImpl;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class MealServlet extends HttpServlet {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final int CALORIES_PER_DAY = 2000;
     MealsRepository mealsRepository;
 
@@ -24,22 +24,27 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String forward = "";
+        String forward;
         String action = request.getParameter("action");
-
-        if ("delete".equalsIgnoreCase(action)) {
-            int mealId = Integer.parseInt(request.getParameter("mealId"));
-            mealsRepository.delete(mealId);
-            forward = "meals.jsp";
-            request.setAttribute("meals", MealsUtil.filteredByStreams(mealsRepository.getAll(), LocalTime.of(0, 0), LocalTime.of(23, 59), CALORIES_PER_DAY));
-        } else if ("edit".equalsIgnoreCase(action)) {
-            forward = "editMeal.jsp";
-            int mealId = Integer.parseInt(request.getParameter("mealId"));
-            Meal meal = mealsRepository.getById(mealId);
-            request.setAttribute("meal", meal);
-        } else {
-            forward = "meals.jsp";
-            request.setAttribute("meals", MealsUtil.filteredByStreams(mealsRepository.getAll(), LocalTime.of(0, 0), LocalTime.of(23, 59), CALORIES_PER_DAY));
+        int id;
+        switch (action == null ? "listMeals" : action) {
+            case "edit":
+                forward = "editMeal.jsp";
+                id = Integer.parseInt(request.getParameter("mealId"));
+                Meal meal = mealsRepository.getById(id);
+                request.setAttribute("meal", meal);
+                break;
+            case "delete":
+                forward = "meals.jsp";
+                id = Integer.parseInt(request.getParameter("mealId"));
+                mealsRepository.delete(id);
+                request.setAttribute("meals", MealsUtil.filteredByStreamsWithoutTime(mealsRepository.getAll(), CALORIES_PER_DAY));
+                break;
+            case "listMeals":
+            default:
+                forward = "meals.jsp";
+                request.setAttribute("action", "listMeals");
+                request.setAttribute("meals", MealsUtil.filteredByStreamsWithoutTime(mealsRepository.getAll(), CALORIES_PER_DAY));
         }
         RequestDispatcher view = request.getRequestDispatcher(forward);
         view.forward(request, response);
@@ -47,7 +52,6 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal();
         meal.setDescription(request.getParameter("description"));
@@ -57,10 +61,9 @@ public class MealServlet extends HttpServlet {
         if (mealid == null || mealid.isEmpty()) {
             mealsRepository.add(meal);
         } else {
-            int id = Integer.parseInt(mealid);
-            mealsRepository.update(id, meal);
+            mealsRepository.update(meal);
         }
-        request.setAttribute("meals", MealsUtil.filteredByStreams(mealsRepository.getAll(), LocalTime.of(0, 0), LocalTime.of(23, 59), CALORIES_PER_DAY));
+        request.setAttribute("meals", MealsUtil.filteredByStreamsWithoutTime(mealsRepository.getAll(), CALORIES_PER_DAY));
         RequestDispatcher view = request.getRequestDispatcher("meals.jsp");
         view.forward(request, response);
 
