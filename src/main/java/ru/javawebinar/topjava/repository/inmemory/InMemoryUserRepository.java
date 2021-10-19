@@ -22,7 +22,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public boolean delete(int id) {
         log.info("delete {}", id);
-        return repository.remove(id, get(id));
+        return repository.remove(id) == null;
     }
 
     @Override
@@ -46,7 +46,8 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> getAll() {
         log.info("getAll");
         return repository.values().stream()
-                .sorted(Comparator.comparing(User::getName))
+                .sorted(Comparator.comparing(User::getName)
+                        .thenComparing(User::getEmail))
                 .collect(Collectors.toList());
     }
 
