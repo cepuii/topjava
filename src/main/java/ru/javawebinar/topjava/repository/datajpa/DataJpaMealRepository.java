@@ -5,7 +5,10 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class DataJpaMealRepository implements MealRepository {
@@ -23,17 +26,27 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return false;
+        Meal meal = get(id, userId);
+        if (meal != null){
+            crudRepository.delete(meal);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return null;
+        Optional<Meal> meal = crudRepository.findById(id);
+        return meal.isPresent() && meal.get().getUser().getId() == userId ? meal.get() : null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return null;
+        return crudRepository.findAll().stream()
+                .filter( m -> m.getUser().getId() != null  && m.getUser().getId() == userId)
+                .sorted(Comparator.comparing(Meal::getDateTime))
+                .collect(Collectors.toList());
     }
 
     @Override
